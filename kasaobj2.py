@@ -26,8 +26,13 @@ class ekrn():
 
         self.ui.setupUi(self.penAna)
         self.penAna.show()
-
         
+        self.ui.tabWidget.setTabEnabled(1, False)
+        self.ui.tabWidget.setTabEnabled(0, False)
+
+        self.ui.pushButton_7.clicked.connect(self.kasaac)
+
+            
         self.conn = pyodbc.connect(
            "Driver={SQL Server Native Client 11.0};"
            "Server=HASAN\SQLEXPRESS1;"
@@ -49,9 +54,9 @@ class ekrn():
            
             self.kmt1=self.conn.cursor()
             
-            self.kmt1.execute('select carad from carler')
+            self.kmt1.execute('select carad,carkod from carler')
             self.kaytlar=self.kmt1.fetchall()
-
+            print(self.kaytlar)
            
            
             self.ui.pushButton.clicked.connect(self.odmeaktar)
@@ -93,7 +98,11 @@ class ekrn():
         self.m=0    
 
         for self.k in self.kaytlar:
-            self.ui.comboBox.addItem(str(self.kaytlar[self.m][0]))
+            if self.k[1][0]=='c':
+                self.ui.comboBox.addItem(str(self.kaytlar[self.m][0]))
+
+            if   self.k[1][0]=='m':
+                self.ui.comboBox_3.addItem(str(self.kaytlar[self.m][0]))  
             
             self.m= self.m + 1
             self.ui.tableWidget.setRowCount(99)
@@ -110,7 +119,9 @@ class ekrn():
         self.ui.label_2.setText(str(date.today())+'ksx')
 
         self.penAna.show()
-
+    def kasaac(self):
+        self.ui.tabWidget.setTabEnabled(1, True)
+        self.ui.tabWidget.setTabEnabled(0, True)
     def islemsl3(self,w):
         
         self.bx=self.ui.comboBox_2.currentText()
@@ -127,21 +138,25 @@ class ekrn():
         
         self.i=0
         self.ui.tableWidget_3.clearContents()
-
+        self.otpl=0
+        self.ttpl=0
         for self.w in self.kaytlarx:
           
             self.ui.tableWidget_3.setItem(self.i,0,QTableWidgetItem(self.w[1]))
             self.ui.tableWidget_3.setItem(self.i,1,QTableWidgetItem(str(self.w[2])))
+            print(self.otpl)
+            self.otpl=self.otpl + self.w[2]
             self.i = self.i + 1
             
         self.i=0
-        
+        self.ui.label_4.setText(str(self.otpl))
         for self.x in self.kaytlarm:    
             self.ui.tableWidget_3.setItem(self.i,3,QTableWidgetItem(self.x[1]))
             self.ui.tableWidget_3.setItem(self.i,4,QTableWidgetItem(str(self.x[2])))
-
+            self.ttpl=self.ttpl + self.x[2]
             self.i = self.i + 1
-            
+        self.ui.label_6.setText(str(self.ttpl))
+        self.ui.label_7.setText(str(self.ttpl-self.otpl))
        
         
     def odmeaktar(self,i):
@@ -171,7 +186,7 @@ class ekrn():
          #═global i,j,kasnet
          self.a= str(date.today())+'ksx'
    
-         self.b=self.ui.comboBox.currentText()
+         self.b=self.ui.comboBox_3.currentText()
          self.c=self.ui.lineEdit_onlyint.text()
 
          self.ui.tableWidget_2.setItem(self.j,0,QTableWidgetItem(str(self.b)))
@@ -252,8 +267,6 @@ class ekrn():
     def islemsl2(self):
         self.ui.tableWidget_2.removeRow(self.ui.tableWidget_2.currentRow())
         self.j=self.j-1
-
-
 gn=ekrn()
 
 
